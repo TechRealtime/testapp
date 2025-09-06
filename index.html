@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prize Win PK</title>
+    <title>Prize win PK - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --primary: #2563eb;
@@ -13,6 +14,7 @@
             --dark: #1e293b;
             --darker: #0f172a;
             --light: #f8fafc;
+            --light-dark: #e2e8f0;
             --gray: #94a3b8;
             --success: #10b981;
             --warning: #f59e0b;
@@ -20,6 +22,7 @@
             --radius: 12px;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            --glow: 0 0 15px rgba(37, 99, 235, 0.5);
         }
 
         .dark-theme {
@@ -29,10 +32,8 @@
             --dark: #f8fafc;
             --darker: #cbd5e1;
             --light: #1e293b;
+            --light-dark: #2d3748;
             --gray: #64748b;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
         }
 
         * {
@@ -42,18 +43,25 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             background-color: var(--light);
             color: var(--dark);
             transition: var(--transition);
             min-height: 100vh;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
+        .app-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+            width: 100%;
         }
 
         /* Header Styles */
@@ -65,6 +73,7 @@
             top: 0;
             z-index: 100;
             box-shadow: var(--shadow);
+            flex-shrink: 0;
         }
 
         .header-content {
@@ -101,6 +110,10 @@
             transition: var(--transition);
         }
 
+        .menu-btn.hidden {
+            display: none;
+        }
+
         .menu-btn:hover {
             background: rgba(255, 255, 255, 0.1);
         }
@@ -112,7 +125,7 @@
             left: -300px;
             width: 300px;
             height: 100vh;
-            background-color: var(--light);
+            background-color: var(--light-dark);
             box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transition: var(--transition);
@@ -122,6 +135,25 @@
 
         .slider-menu.active {
             left: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         .menu-header {
@@ -147,6 +179,8 @@
 
         .menu-items li {
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
         }
 
         .menu-items a {
@@ -158,6 +192,7 @@
             text-decoration: none;
             border-radius: var(--radius);
             transition: var(--transition);
+            width: 100%;
         }
 
         .menu-items a:hover, .menu-items a.active {
@@ -231,18 +266,32 @@
             transform: translateX(26px);
         }
 
-        /* Main Content */
-        .main-content {
-            padding: 30px 0;
-            min-height: calc(100vh - 180px);
+        /* Page Container */
+        .page-container {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .page {
-            display: none;
+            position: absolute;
+            width: 100%;
+            padding: 30px 0;
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .page.active {
-            display: block;
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
         }
 
         .page-title {
@@ -260,15 +309,21 @@
             justify-content: center;
             align-items: center;
             min-height: 80vh;
+            padding: 20px 0;
         }
 
         .auth-box {
-            background-color: var(--light);
+            background-color: var(--light-dark);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             width: 100%;
             max-width: 450px;
             overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .auth-box:hover {
+            box-shadow: var(--glow);
         }
 
         .auth-header {
@@ -300,8 +355,14 @@
             border-radius: var(--radius);
             font-size: 1rem;
             transition: var(--transition);
-            background-color: var(--light);
+            background-color: white;
             color: var(--dark);
+        }
+
+        .dark-theme .form-control {
+            background-color: var(--light-dark);
+            color: var(--dark);
+            border-color: var(--gray);
         }
 
         .form-control:focus {
@@ -330,6 +391,7 @@
         .btn:hover {
             background-color: var(--primary-dark);
             transform: translateY(-2px);
+            box-shadow: var(--glow);
         }
 
         .btn-block {
@@ -343,6 +405,16 @@
 
         .btn-secondary:hover {
             background-color: #6b21a8;
+        }
+
+        .btn-light {
+            background-color: white;
+            color: black;
+        }
+
+        .btn-light:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
         }
 
         .auth-footer {
@@ -436,7 +508,7 @@
         }
 
         .modal {
-            background-color: var(--light);
+            background-color: var(--light-dark);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             width: 90%;
@@ -515,6 +587,10 @@
             margin-bottom: 10px;
         }
 
+        .dark-theme .account-info {
+            background-color: var(--light);
+        }
+
         .copy-btn {
             background: none;
             border: none;
@@ -523,15 +599,10 @@
             font-size: 1.2rem;
         }
 
-        .qr-code {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .qr-code img {
-            max-width: 200px;
-            border: 1px solid var(--gray);
-            border-radius: var(--radius);
+        .payment-instruction {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            color: var(--dark);
         }
 
         /* Products Grid */
@@ -543,15 +614,17 @@
         }
 
         .product-card {
-            background-color: var(--light);
+            background-color: var(--light-dark);
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            border: 1px solid var(--gray);
         }
 
         .product-card:hover {
             transform: translateY(-5px);
+            box-shadow: var(--glow);
         }
 
         .product-img {
@@ -617,40 +690,90 @@
             font-size: 1.2rem;
         }
 
-        /* Footer */
-        footer {
-            background-color: var(--darker);
+        /* Admin Panel */
+        .admin-section {
+            background-color: var(--light-dark);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .admin-section h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .data-table th {
+            background-color: rgba(0, 0, 0, 0.03);
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+            background-color: var(--warning);
             color: white;
-            padding: 30px 0;
-            text-align: center;
         }
 
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--gray);
-            text-decoration: none;
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
             transition: var(--transition);
+            z-index: 3000;
         }
 
-        .footer-links a:hover {
-            color: white;
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
 
-        .copyright {
-            color: var(--gray);
-            margin-top: 20px;
+        /* Remember me checkbox */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember-me input {
+            margin-right: 10px;
         }
 
         /* Responsive */
@@ -666,26 +789,45 @@
             .result-content {
                 font-size: 1.5rem;
             }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .header-content {
+                padding: 0 10px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .auth-container {
+                padding: 10px 0;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div class="container">
+        <div class="app-container">
             <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-gift"></i>
-                    <span>Prize Win PK</span>
-                </div>
-                <button class="menu-btn" id="menuBtn">
+                <div class="menu-btn hidden" id="menuBtn">
                     <i class="fas fa-bars"></i>
-                </button>
+                </div>
+                <div class="logo">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Prize win PK</span>
+                </div>
+                <div style="width: 40px;"></div> <!-- For balance -->
             </div>
         </div>
     </header>
 
-    <!-- Slider Menu -->
+    <!-- Slider Menu and Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
     <div class="slider-menu" id="sliderMenu">
         <div class="menu-header">
             <h3>Menu</h3>
@@ -699,7 +841,7 @@
             <li><a href="#" class="nav-link" data-page="products"><i class="fas fa-gift"></i> Products</a></li>
             <li><a href="#" class="nav-link" data-page="results"><i class="fas fa-trophy"></i> Results</a></li>
             <li><a href="#" class="nav-link" data-page="profile"><i class="fas fa-user"></i> Profile</a></li>
-            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="#" id="menuLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
         
         <div class="theme-switcher">
@@ -714,11 +856,14 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Login Page -->
-            <div class="page active" id="loginPage">
+    <main class="page-container">
+        <!-- Login Page -->
+        <div class="page active" id="loginPage">
+            <div class="app-container">
                 <div class="auth-container">
                     <div class="auth-box">
                         <div class="auth-header">
@@ -733,6 +878,10 @@
                                 <label for="loginPassword">Password</label>
                                 <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
                             </div>
+                            <div class="remember-me">
+                                <input type="checkbox" id="rememberMe">
+                                <label for="rememberMe">Remember me</label>
+                            </div>
                             <button class="btn btn-block" id="loginBtn">Login</button>
                             <div class="auth-footer">
                                 <p>Don't have an account? <a href="#" id="goToRegister">Register</a></p>
@@ -741,9 +890,11 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Register Page -->
-            <div class="page" id="registerPage">
+        <!-- Register Page -->
+        <div class="page" id="registerPage">
+            <div class="app-container">
                 <div class="auth-container">
                     <div class="auth-box">
                         <div class="auth-header">
@@ -774,51 +925,131 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Dashboard Page -->
-            <div class="page" id="dashboardPage">
+        <!-- Dashboard Page -->
+        <div class="page" id="dashboardPage">
+            <div class="app-container">
                 <h1 class="page-title"><i class="fas fa-home"></i> Dashboard</h1>
-                <p>Welcome to Prize Win PK! Purchase tickets for a chance to win amazing prizes.</p>
+                <p>Welcome to Prize win PK! Purchase tickets for a chance to win amazing prizes.</p>
                 
                 <div class="ticket-cards">
                     <div class="ticket-card">
                         <h3>Basic Ticket</h3>
                         <div class="price">100 <span>PKR</span></div>
                         <p class="desc">Entry to weekly draws with 1 product selection</p>
-                        <button class="btn btn-block buy-ticket" data-price="100">Buy Now</button>
+                        <button class="btn btn-light buy-ticket" data-price="100">Buy Now</button>
                     </div>
                     
                     <div class="ticket-card">
                         <h3>Silver Ticket</h3>
                         <div class="price">250 <span>PKR</span></div>
                         <p class="desc">Entry to weekly draws with 2 product selections</p>
-                        <button class="btn btn-block buy-ticket" data-price="250">Buy Now</button>
+                        <button class="btn btn-light buy-ticket" data-price="250">Buy Now</button>
                     </div>
                     
                     <div class="ticket-card">
                         <h3>Gold Ticket</h3>
                         <div class="price">500 <span>PKR</span></div>
                         <p class="desc">Entry to weekly draws with 3 product selections</p>
-                        <button class="btn btn-block buy-ticket" data-price="500">Buy Now</button>
+                        <button class="btn btn-light buy-ticket" data-price="500">Buy Now</button>
                     </div>
                     
                     <div class="ticket-card">
                         <h3>Platinum Ticket</h3>
                         <div class="price">1000 <span>PKR</span></div>
                         <p class="desc">Entry to weekly draws with 5 product selections</p>
-                        <button class="btn btn-block buy-ticket" data-price="1000">Buy Now</button>
+                        <button class="btn btn-light buy-ticket" data-price="1000">Buy Now</button>
                     </div>
                     
                     <div class="ticket-card">
                         <h3>Diamond Ticket</h3>
                         <div class="price">2500 <span>PKR</span></div>
                         <p class="desc">Entry to all draws with unlimited product selections</p>
-                        <button class="btn btn-block buy-ticket" data-price="2500">Buy Now</button>
+                        <button class="btn btn-light buy-ticket" data-price="2500">Buy Now</button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Other pages would go here -->
+        <!-- Tickets Page -->
+        <div class="page" id="ticketsPage">
+            <div class="app-container">
+                <h1 class="page-title"><i class="fas fa-ticket-alt"></i> My Tickets</h1>
+                <p>View your purchased tickets and their status.</p>
+                
+                <div class="admin-section">
+                    <h3>Purchased Tickets</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Type</th>
+                                <th>Purchase Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticketsList">
+                            <!-- Tickets will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Page -->
+        <div class="page" id="productsPage">
+            <div class="app-container">
+                <h1 class="page-title"><i class="fas fa-gift"></i> Available Products</h1>
+                <p>These are the products you can win in our draws.</p>
+                
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div class="page" id="resultsPage">
+            <div class="app-container">
+                <h1 class="page-title"><i class="fas fa-trophy"></i> Draw Results</h1>
+                <p>Check if you've won any of our prizes.</p>
+                
+                <div class="results-container">
+                    <div class="result-box">
+                        <div class="result-content" id="resultText">Click shuffle to see if you won!</div>
+                    </div>
+                    <button class="btn shuffle-btn" id="shuffleBtn">Shuffle</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div class="page" id="profilePage">
+            <div class="app-container">
+                <h1 class="page-title"><i class="fas fa-user"></i> My Profile</h1>
+                
+                <div class="auth-box">
+                    <div class="auth-header">
+                        <h2>Personal Information</h2>
+                    </div>
+                    <div class="auth-body">
+                        <div class="form-group">
+                            <label for="profileName">Full Name</label>
+                            <input type="text" class="form-control" id="profileName" placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone Number</label>
+                            <input type="tel" class="form-control" id="profilePhone" placeholder="Your phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePassword">New Password</label>
+                            <input type="password" class="form-control" id="profilePassword" placeholder="Leave blank to keep current">
+                        </div>
+                        <button class="btn btn-block" id="saveProfileBtn">Save Changes</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -857,16 +1088,9 @@
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>
-                    
-                    <div class="qr-code">
-                        <p>Or scan this QR code:</p>
-                        <div style="width: 200px; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto; border-radius: 12px;">
-                            <i class="fas fa-qrcode" style="font-size: 5rem; color: #ccc;"></i>
-                        </div>
-                    </div>
                 </div>
                 
-                <p>After payment, please send the screenshot to our WhatsApp business account:</p>
+                <p class="payment-instruction">After payment, please send the screenshot to our WhatsApp business account:</p>
                 <a href="https://wa.me/+923414698072" class="btn btn-block" target="_blank">
                     <i class="fab fa-whatsapp"></i> Send Receipt via WhatsApp
                 </a>
@@ -877,35 +1101,14 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="logo">
-                    <i class="fas fa-gift"></i>
-                    <span>Prize Win PK</span>
-                </div>
-                <div class="footer-links">
-                    <a href="#">About Us</a>
-                    <a href="#">Terms & Conditions</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Contact Us</a>
-                    <a href="#">FAQs</a>
-                </div>
-                <p class="copyright">© 2025 Prize Win PK. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
     <script>
         // DOM Elements
         const menuBtn = document.getElementById('menuBtn');
         const closeMenu = document.getElementById('closeMenu');
         const sliderMenu = document.getElementById('sliderMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
         const themeSwitch = document.getElementById('themeSwitch');
-        const loginPage = document.getElementById('loginPage');
-        const registerPage = document.getElementById('registerPage');
-        const dashboardPage = document.getElementById('dashboardPage');
+        const pages = document.querySelectorAll('.page');
         const goToRegister = document.getElementById('goToRegister');
         const goToLogin = document.getElementById('goToLogin');
         const loginBtn = document.getElementById('loginBtn');
@@ -917,15 +1120,187 @@
         const copyAccountBtn = document.getElementById('copyAccountBtn');
         const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
         const navLinks = document.querySelectorAll('.nav-link');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const menuLogoutBtn = document.getElementById('menuLogoutBtn');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const resultText = document.getElementById('resultText');
+        const toast = document.getElementById('toast');
+        const ticketsList = document.getElementById('ticketsList');
+        const productsGrid = document.getElementById('productsGrid');
+        const rememberMe = document.getElementById('rememberMe');
+
+        // Current page state
+        let currentPage = 'loginPage';
+        let currentUser = null;
+        let selectedTicketPrice = 0;
+
+        // Show specific page
+        function showPage(pageId) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show the requested page
+            document.getElementById(pageId).classList.add('active');
+            currentPage = pageId;
+            
+            // Close menu if open
+            hideMenu();
+            
+            // Show/hide menu button based on page
+            if (pageId === 'loginPage' || pageId === 'registerPage') {
+                menuBtn.classList.add('hidden');
+            } else {
+                menuBtn.classList.remove('hidden');
+            }
+            
+            // Load page-specific data
+            if (pageId === 'ticketsPage') {
+                loadUserTickets();
+            } else if (pageId === 'productsPage') {
+                loadProducts();
+            } else if (pageId === 'profilePage') {
+                loadProfileData();
+            }
+        }
+
+        // Show/hide menu
+        function showMenu() {
+            sliderMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideMenu() {
+            sliderMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Check authentication state
+        function checkAuthState() {
+            const userData = localStorage.getItem('currentUser');
+            
+            if (userData) {
+                // User is logged in
+                currentUser = JSON.parse(userData);
+                
+                // Show dashboard
+                showPage('dashboardPage');
+            } else {
+                // User is not logged in
+                currentUser = null;
+                
+                // Check if we have saved credentials for "remember me"
+                const savedPhone = localStorage.getItem('rememberedPhone');
+                if (savedPhone) {
+                    document.getElementById('loginPhone').value = savedPhone;
+                    rememberMe.checked = true;
+                }
+                
+                showPage('loginPage');
+            }
+        }
+
+        // Load user tickets
+        function loadUserTickets() {
+            if (!currentUser) return;
+            
+            ticketsList.innerHTML = '<tr><td colspan="4">Loading tickets...</td></tr>';
+            
+            // Get tickets from localStorage
+            const allTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+            const userTickets = allTickets.filter(ticket => ticket.userId === currentUser.id);
+            
+            if (userTickets.length === 0) {
+                ticketsList.innerHTML = '<tr><td colspan="4">No tickets purchased yet</td></tr>';
+                return;
+            }
+            
+            ticketsList.innerHTML = '';
+            userTickets.forEach(ticket => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${ticket.id}</td>
+                    <td>${ticket.type}</td>
+                    <td>${new Date(ticket.purchaseDate).toLocaleDateString()}</td>
+                    <td>${ticket.status}</td>
+                `;
+                
+                ticketsList.appendChild(row);
+            });
+        }
+
+        // Load products
+        function loadProducts() {
+            productsGrid.innerHTML = '<div>Loading products...</div>';
+            
+            // Get products from localStorage
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            if (products.length === 0) {
+                productsGrid.innerHTML = '<div>No products available</div>';
+                return;
+            }
+            
+            productsGrid.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                productCard.innerHTML = `
+                    <div class="product-img">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="product-body">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-desc">${product.description}</p>
+                    </div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        // Load profile data
+        function loadProfileData() {
+            if (!currentUser) return;
+            
+            document.getElementById('profileName').value = currentUser.name;
+            document.getElementById('profilePhone').value = currentUser.phone;
+        }
 
         // Event Listeners
-        menuBtn.addEventListener('click', () => {
-            sliderMenu.classList.add('active');
+        menuBtn.addEventListener('click', showMenu);
+        closeMenu.addEventListener('click', hideMenu);
+        menuOverlay.addEventListener('click', hideMenu);
+
+        // Swipe to close menu
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        sliderMenu.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
         });
 
-        closeMenu.addEventListener('click', () => {
-            sliderMenu.classList.remove('active');
+        sliderMenu.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                hideMenu();
+            }
         });
 
         themeSwitch.addEventListener('change', () => {
@@ -936,59 +1311,101 @@
 
         goToRegister.addEventListener('click', (e) => {
             e.preventDefault();
-            loginPage.classList.remove('active');
-            registerPage.classList.add('active');
+            showPage('registerPage');
         });
 
         goToLogin.addEventListener('click', (e) => {
             e.preventDefault();
-            registerPage.classList.remove('active');
-            loginPage.classList.add('active');
+            showPage('loginPage');
         });
 
         loginBtn.addEventListener('click', () => {
-            // Simple validation
             const phone = document.getElementById('loginPhone').value;
             const password = document.getElementById('loginPassword').value;
             
-            if (phone && password) {
-                // Check for admin login
-                if (phone === 'admin' && password === 'admin@(62332556)') {
-                    window.location.href = 'admin.html'; // Redirect to admin page
-                    return;
-                }
-                
-                loginPage.classList.remove('active');
-                dashboardPage.classList.add('active');
-            } else {
-                alert('Please enter both phone number and password');
+            if (!phone || !password) {
+                showToast('Please enter both phone number and password', 'error');
+                return;
             }
+            
+            // Save phone if "remember me" is checked
+            if (rememberMe.checked) {
+                localStorage.setItem('rememberedPhone', phone);
+            } else {
+                localStorage.removeItem('rememberedPhone');
+            }
+            
+            // Check if user exists in localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.phone === phone && u.password === password);
+            
+            if (!user) {
+                showToast('Invalid phone number or password', 'error');
+                return;
+            }
+            
+            // Login successful
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            showToast('Login successful');
+            showPage('dashboardPage');
         });
 
         registerBtn.addEventListener('click', () => {
-            // Simple validation
             const name = document.getElementById('registerName').value;
             const phone = document.getElementById('registerPhone').value;
             const password = document.getElementById('registerPassword').value;
             const confirm = document.getElementById('registerConfirm').value;
             
-            if (password !== confirm) {
-                alert('Passwords do not match');
+            if (!name || !phone || !password) {
+                showToast('Please fill all fields', 'error');
                 return;
             }
             
-            if (name && phone && password) {
-                registerPage.classList.remove('active');
-                dashboardPage.classList.add('active');
-            } else {
-                alert('Please fill all fields');
+            if (password !== confirm) {
+                showToast('Passwords do not match', 'error');
+                return;
             }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(user => user.phone === phone)) {
+                showToast('User with this phone number already exists', 'error');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                phone,
+                password,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save user
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Auto login
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            
+            showToast('Registration successful');
+            showPage('dashboardPage');
         });
 
         buyTicketButtons.forEach(button => {
             button.addEventListener('click', () => {
-                const price = button.getAttribute('data-price');
-                paymentAmount.textContent = price;
+                if (!currentUser) {
+                    showToast('Please login first', 'error');
+                    showPage('loginPage');
+                    return;
+                }
+                
+                selectedTicketPrice = button.getAttribute('data-price');
+                paymentAmount.textContent = selectedTicketPrice;
                 paymentModal.classList.add('active');
             });
         });
@@ -1009,45 +1426,140 @@
                     icon.classList.remove('fa-check');
                     icon.classList.add('fa-copy');
                 }, 2000);
+                
+                showToast('Account number copied to clipboard');
             });
         });
 
         confirmPaymentBtn.addEventListener('click', () => {
+            if (!currentUser) return;
+            
+            // Create a ticket record
+            const ticketType = document.querySelector(`.buy-ticket[data-price="${selectedTicketPrice}"]`).closest('.ticket-card').querySelector('h3').textContent;
+            
+            const newTicket = {
+                id: 'T' + Date.now(),
+                userId: currentUser.id,
+                type: ticketType,
+                price: parseInt(selectedTicketPrice),
+                purchaseDate: new Date().toISOString(),
+                status: 'Pending Verification'
+            };
+            
+            // Save ticket
+            const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+            tickets.push(newTicket);
+            localStorage.setItem('tickets', JSON.stringify(tickets));
+            
             paymentModal.classList.remove('active');
-            alert('Thank you for your payment! Your participation will be confirmed after verification.');
+            showToast('Thank you for your payment! Your participation will be confirmed after verification.');
         });
 
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                if (!currentUser) {
+                    showToast('Please login first', 'error');
+                    showPage('loginPage');
+                    return;
+                }
+                
                 const page = link.getAttribute('data-page');
-                // For demo purposes, just show an alert
-                alert(`Would navigate to ${page} page`);
+                showPage(page + 'Page');
             });
         });
 
-        logoutBtn.addEventListener('click', (e) => {
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            showToast('Logged out successfully');
+            showPage('loginPage');
+        }
+
+        menuLogoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            dashboardPage.classList.remove('active');
-            loginPage.classList.add('active');
-            sliderMenu.classList.remove('active');
+            handleLogout();
         });
 
-        // Check for saved theme preference
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-theme');
-            themeSwitch.checked = true;
-        }
+        saveProfileBtn.addEventListener('click', () => {
+            if (!currentUser) return;
+            
+            const name = document.getElementById('profileName').value;
+            const phone = document.getElementById('profilePhone').value;
+            const password = document.getElementById('profilePassword').value;
+            
+            // Update user data
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(user => user.id === currentUser.id);
+            
+            if (userIndex !== -1) {
+                users[userIndex].name = name;
+                users[userIndex].phone = phone;
+                
+                if (password) {
+                    users[userIndex].password = password;
+                }
+                
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Update current user
+                currentUser = users[userIndex];
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                showToast('Profile updated successfully');
+            }
+        });
+
+        shuffleBtn.addEventListener('click', () => {
+            if (!currentUser) {
+                showToast('Please login first', 'error');
+                showPage('loginPage');
+                return;
+            }
+            
+            resultText.textContent = "Shuffling...";
+            
+            const products = [
+                "Smartphone", "LED TV", "Laptop", "Watch", 
+                "Headphones", "Gift Voucher", "Bicycle", "Kitchen Appliance"
+            ];
+            
+            let counter = 0;
+            const shuffleInterval = setInterval(() => {
+                resultText.textContent = products[Math.floor(Math.random() * products.length)];
+                counter++;
+                
+                if (counter > 10) {
+                    clearInterval(shuffleInterval);
+                    setTimeout(() => {
+                        const wonProduct = products[Math.floor(Math.random() * products.length)];
+                        resultText.textContent = `Congratulations! You won a ${wonProduct}!`;
+                    }, 500);
+                }
+            }, 100);
+        });
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is logged in (in a real app, you'd check authentication state)
-            const isLoggedIn = false; // Change to true for testing dashboard
-            
-            if (isLoggedIn) {
-                loginPage.classList.remove('active');
-                dashboardPage.classList.add('active');
+            // Check for saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-theme');
+                themeSwitch.checked = true;
             }
+            
+            // Add sample products if none exist
+            if (!localStorage.getItem('products')) {
+                const sampleProducts = [
+                    { id: '1', name: "Smartphone", description: "Latest model with high-end specifications" },
+                    { id: '2', name: "LED TV", description: "55-inch 4K Ultra HD Smart TV" },
+                    { id: '3', name: "Laptop", description: "Powerful laptop for work and gaming" },
+                    { id: '4', name: "Gift Voucher", description: "$500 shopping voucher" }
+                ];
+                localStorage.setItem('products', JSON.stringify(sampleProducts));
+            }
+            
+            // Check if user is logged in
+            checkAuthState();
         });
     </script>
 </body>
